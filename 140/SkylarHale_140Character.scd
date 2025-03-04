@@ -1,0 +1,1 @@
+play{LFTri.ar(LFSaw.kr(LFPulse.kr(1/8,1/4,1/4)*2+2,1,-33,66))+(GrayNoise.ar(LFPulse.kr(7,7,LFSaw.kr(1,7/8)/4+0.05))/8)!3}
