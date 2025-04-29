@@ -26,4 +26,28 @@ a.mute; // keeps playing, but replaces notes with rests
 a.unmute;
 )
 
-baseArpNotes.add;
+// routines establish direction of the piece. k Routine is what controls starting and stopping of Pbinds, r Routine is what iterates through the k Routine
+
+
+
+(
+k = Routine.({
+	a.play.yield;
+	a.stop.yield;
+
+})
+)
+
+(
+r = Routine({
+    loop {
+        k.next;
+		5.yield;
+    }
+});
+
+
+TempoClock.default.sched(0, r); // run this to start the entire piece
+)
+
+r.stop;
