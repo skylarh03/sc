@@ -38,6 +38,17 @@ Pbindef( // duplicate copy of a to be layered
 	\pan, Pxrand([-0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75], inf)
 );
 
+~arpPatterns = [[-10000, -10000], [-10000, -10000], [-10000, -10000], [-10000, -10000], [-10000, -10000], [-10000, -10000], [1, 3], [3, 5], [5, 7], [7, 8], [8, 10], [10, 12], [12, 13], [13, 14], [14, 13], [13, 12], [12, 10], [10, 8], [8, 7], [7, 5], [5, 3], [3, 1]];
+Pbindef( // defined Pbind to be layered in for Bb Lydian section
+	\h,
+	\instrument, \baseArp,
+	\scale, Scale.mixolydian,
+	\degree, Pseq(~arpPatterns[IRand(0, 21)], inf),
+	\dur, 0.125,
+	\delta, 0.0625,
+	\amp, -0.25
+);
+
 ~reversePiano_01=Buffer.read(s,thisProcess.nowExecutingPath.dirname++"/reversePiano_01.wav");
 ~reversePiano_02=Buffer.read(s,thisProcess.nowExecutingPath.dirname++"/reversePiano_02.wav");
 ~reversePiano_03=Buffer.read(s,thisProcess.nowExecutingPath.dirname++"/reversePiano_03.wav");
@@ -269,13 +280,13 @@ r = Routine({
 		\a,
 		\degree, Pxrand([-4, -4, -3, -2, -2, 0, 0, 1, 1, 1, 2, 3, 3, 4, 5, 5, 7, 7, 8, 8, 8, 9, 10, 10, 11, 12, 12, -10000], inf)
 	);
-	0.5.yield;
+	1.5.yield;
 
 	Pbindef( // changes bass notes to default
 		\e,
 		\degree, Pxrand(~bassNotes, inf),
 	);
-	31.5.yield;
+	30.5.yield;
 
 	// begin setting up transition to changing the mode. change reverse piano to another new chord, align timings, change scale on the new downbeat for necessary Pbindefs, define downbeat bass note and new notes afterward
 	Pbindef(\d).stop;
@@ -283,6 +294,16 @@ r = Routine({
 	Pbindef( // change reverse piano to new chord
 		\d,
 		\bufnum, ~reversePiano_06
+	);
+
+	// remove B natural from \b and \c Pbinds so there isn't a m2 on the transition
+	Pbindef(
+		\b,
+		\degree, Pxrand([-4, -3, -2, 0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12], inf)
+	);
+	Pbindef(
+		\c,
+		\degree, Pxrand([-4, -3, -2, 0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12], inf)
 	);
 	6.29776.yield; // give time for last reverse piano chords to play
 	Pbindef(\d).play; // play new reverse piano chord
@@ -301,9 +322,40 @@ r = Routine({
 	);
 	Pbindef(\e).stop;
 	1.yield;
-	"Bb lydian time wahoo".postln;
+	"Bb lydian introduced, run line xxx whenever you feel like it until the next console message pops up".postln;
 	Pbindef(\e).play; // bass instrument with on low Bb for new section marking
 	Pbindef(\d).play; // reverse piano with new chords
+	Pbindef(\h).play; // new faster arp layer
+
+	// time to change the scale of everything else that's tonal lol
+	Pbindef(
+		\a,
+		\scale, Scale.mixolydian,
+		\degree, Pxrand([-4, -4, -3, -2, -2, -1, -1, -1, 0, 0, 1, 1, 1, 2, 3, 3, 4, 5, 5, 7, 7, 7, 8, 8, 8, 9, 10, 10, 11, 12, 12, 13, 13, 13, 14, 14], inf)
+	);
+	Pbindef(
+		\g,
+		\scale, Scale.mixolydian,
+		\degree, Pxrand([-4, -4, -3, -2, -2, -1, -1, -1, 0, 0, 1, 1, 1, 2, 3, 3, 4, 5, 5, 7, 7, 7, 8, 8, 8, 9, 10, 10, 11, 12, 12, 13, 13, 13, 14, 14], inf)
+	);
+	Pbindef(
+		\b,
+		\scale, Scale.mixolydian,
+		\degree, Pxrand(~etherealNotes, inf),
+		\dur, Pxrand([2, 0.25, 0.25, 0.125, 0.125, 0.125, 0.0625], inf)
+	);
+	Pbindef(
+		\c,
+		\scale, Scale.mixolydian,
+		\degree, Pxrand(~etherealNotes, inf),
+		\dur, Pxrand([2, 0.25, 0.25, 0.125, 0.125, 0.125, 0.0625], inf)
+	);
+
+	1.yield;
+	Pbindef( // change bass notes to fit new section
+		\e,
+		\degree, Pxrand([-15, -14, -13, -11, -10, -8], inf)
+	);
 })
 )
 )
