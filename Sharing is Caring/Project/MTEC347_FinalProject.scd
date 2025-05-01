@@ -38,15 +38,16 @@ Pbindef( // duplicate copy of a to be layered
 	\pan, Pxrand([-0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75], inf)
 );
 
-~arpPatterns = [[-10000, -10000], [-10000, -10000], [-10000, -10000], [-10000, -10000], [-10000, -10000], [-10000, -10000], [1, 3], [3, 5], [5, 7], [7, 8], [8, 10], [10, 12], [12, 13], [13, 14], [14, 13], [13, 12], [12, 10], [10, 8], [8, 7], [7, 5], [5, 3], [3, 1]];
+~arpPatterns = [[0, 1, 3, 5, 7, 8, 10, 12, 14], [14, 12, 10, 8, 7, 5, 3, 1, 0], [13, 14, 12, -10000, 10], [1, -10000, 3, -10000, 5, -10000, 6, -10000, 7, -10000, 5, -10000, 3]];
 Pbindef( // defined Pbind to be layered in for Bb Lydian section
 	\h,
 	\instrument, \baseArp,
 	\scale, Scale.mixolydian,
-	\degree, Pseq(~arpPatterns[IRand(0, 21)], inf),
+	\degree, Pseq(~arpPatterns[0], inf),
 	\dur, 0.125,
 	\delta, 0.0625,
-	\amp, -0.25
+	\amp, -0.25//,
+	// \pan, Pxrand([-0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75], inf)
 );
 
 ~reversePiano_01=Buffer.read(s,thisProcess.nowExecutingPath.dirname++"/reversePiano_01.wav");
@@ -244,6 +245,8 @@ k = Routine({
 })
 );
 
+// Bb lydian section arp layer, randomly adjusting arpPattern index
+
 ( // main routine
 r = Routine({
 	3.do { // because 2.do didn't work i guess
@@ -326,6 +329,7 @@ r = Routine({
 	Pbindef(\e).play; // bass instrument with on low Bb for new section marking
 	Pbindef(\d).play; // reverse piano with new chords
 	Pbindef(\h).play; // new faster arp layer
+	z.start; // start
 
 	// time to change the scale of everything else that's tonal lol
 	Pbindef(
@@ -390,3 +394,18 @@ r.stop;
 Pbindef(\a).play;
 Pbindef(\g).play;
 )
+
+Pbindef(\h).play;
+Pbindef(\h).stop;
+
+(
+Pbindef(
+	\h,
+	\degree, Pseq(~arpPatterns.choose, inf)
+);
+)
+
+z.play;
+z.stop;
+TempoClock.default.sched(0, z);
+
